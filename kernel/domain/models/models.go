@@ -28,3 +28,11 @@ type Category struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
+
+type Inventory struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Campus      int    `json:"campus_id"`
+	Category    int    `json:"category_id"`
+}

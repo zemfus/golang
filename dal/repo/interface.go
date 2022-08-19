@@ -43,6 +43,11 @@ type Booking interface {
 
 type Root interface {
 	GetAllCampuses(ctx context.Context) ([]models.Campus, error)
+	GetAllInventory(ctx context.Context) ([]models.Inventory, error)
+	UpdateInventory(ctx context.Context, inventory *models.Inventory) error
+	DeleteInventory(ctx context.Context, ID int) error
+	CreateInventory(ctx context.Context, inventory *models.Inventory) error
+	GetInventoryByID(ctx context.Context, ID int) (*models.Inventory, error)
 	CreateCategory(ctx context.Context, Category string) error
 	GetAllCategory(ctx context.Context) ([]models.Category, error)
 	DeleteCategory(ctx context.Context, name string) error
