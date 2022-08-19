@@ -12,6 +12,7 @@ type Opts struct {
 	UserRepo    repo.User
 	SessionRepo repo.Session
 	Update      *tg.Update
+	RootRepo    repo.Root
 }
 
 type NewServiceFunc func(opts *Opts) (Service, error)

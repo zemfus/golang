@@ -11,7 +11,7 @@ type session struct {
 	connPool *pgxpool.Pool
 }
 
-func NewSession(connPool *pgxpool.Pool) *session {
+func NewSession(connPool *pgxpool.Pool) Session {
 	return &session{
 		connPool: connPool,
 	}

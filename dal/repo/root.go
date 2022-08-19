@@ -11,6 +11,12 @@ type root struct {
 	connPool *pgxpool.Pool
 }
 
+func NewRoot(connPool *pgxpool.Pool) Root {
+	return &root{
+		connPool: connPool,
+	}
+}
+
 func (r root) GetAllCampuses(ctx context.Context) ([]models.Campus, error) {
 	rows, err := r.connPool.Query(ctx, "SELECT id, name FROM Campus")
 	if err != nil {
