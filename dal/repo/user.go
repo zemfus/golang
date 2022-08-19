@@ -153,13 +153,28 @@ func (u user) Delete(ctx context.Context, ID int) error {
 }
 
 func (u user) ExistByID(ctx context.Context, id int) (bool, error) {
-	var ex bool
-	err := u.connPool.QueryRow(ctx, "SELECT EXISTS (SELECT id FROM users WHERE id  = $1);", id).Scan(&ex)
-	return ex, err
+	exec, err := u.connPool.Exec(ctx, "SELECT * FROM users WHERE id = $1", id)
+	if err != nil {
+		return false, err
+	}
+
+	if exec.RowsAffected() != 0 {
+		return false, err
+	} else {
+		return true, err
+	}
+
 }
 
 func (u user) ExistByNickname(ctx context.Context, nickname string) (bool, error) {
-	var ex bool
-	err := u.connPool.QueryRow(ctx, "SELECT EXISTS (SELECT id FROM users WHERE nickname  = $1);", nickname).Scan(&ex)
-	return ex, err
+	exec, err := u.connPool.Exec(ctx, "SELECT * FROM users WHERE nickname = $1", nickname)
+	if err != nil {
+		return false, err
+	}
+
+	if exec.RowsAffected() != 0 {
+		return false, err
+	} else {
+		return true, err
+	}
 }

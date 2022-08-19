@@ -43,4 +43,9 @@ type Booking interface {
 
 type Root interface {
 	GetAllCampuses(ctx context.Context) ([]models.Campus, error)
+	CreateCategory(ctx context.Context, Category string) error
+	GetAllCategory(ctx context.Context) ([]models.Category, error)
+	DeleteCategory(ctx context.Context, name string) error
 }
+
+//CREATE get update delete
