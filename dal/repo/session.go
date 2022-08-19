@@ -23,8 +23,23 @@ func (s session) GetByID(ctx context.Context, id int) (*models.Session, error) {
 }
 
 func (s session) GetByUserID(ctx context.Context, userID int) (*models.Session, error) {
-	//TODO implement me
-	panic("implement me")
+	rows, err := s.connPool.Query(ctx, `SELECT
+		code,
+			FROM sessions WHERE user_id = $1`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var session = models.Session{}
+	if rows.Next() {
+		err = rows.Scan(&session.Code)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &session, nil
 }
 
 func (s session) Create(ctx context.Context, session *models.Session) error {
@@ -33,6 +48,21 @@ func (s session) Create(ctx context.Context, session *models.Session) error {
 		session.UserID, session.Code)
 
 	return err
+}
+
+func (s session) ExistsByCodeAndUserID(ctx context.Context, userID int, code int) (bool, error) {
+	rows, err := s.connPool.Exec(ctx,
+		`SELECT id FROM sessions WHERE user_id = $1 AND code = $2`,
+		userID, code)
+	if err != nil {
+		return false, err
+	}
+
+	if rows.RowsAffected() != 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
 
 func (s session) Delete(ctx context.Context, ID int) error {

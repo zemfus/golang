@@ -36,7 +36,8 @@ func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfi
 	}
 
 	chain := register.NewReqEmail(opts)
-	chain.SetNext(register.NewSendConfirmURL(opts))
+	chain.SetNext(register.NewSendConfirmURL(opts)).
+		SetNext(register.NewCheckCode(opts))
 
 	msgReply, err := chain.Handle(ctx, user)
 	if err != nil {

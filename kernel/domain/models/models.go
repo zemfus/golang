@@ -18,3 +18,8 @@ type User struct {
 	CampusID   *int   `json:"campus_id"`
 	HandleStep int    `json:"handle_step"`
 }
+
+type Campus struct {
+	ID   int `json:"id"`
+	Name int `json:"name"`
+}

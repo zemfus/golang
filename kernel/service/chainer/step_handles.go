@@ -5,9 +5,9 @@ type StepHandle int
 const (
 	NonStep StepHandle = iota // Non step
 
-	StartRequestEmailStep   // /start
-	StartSendConfirmURLStep // /start
-	StartWaitingConfirmStep
+	StartRequestEmailStep    // /start
+	StartSendConfirmCodeStep // /start
+	StartCheckConfirmCodeStep
 	StartChangeCampusStep
 
 	CreateBookingReceiveDataStep // /create_booking
@@ -26,6 +26,6 @@ const (
 
 var StartSteps = []StepHandle{
 	StartRequestEmailStep,
-	StartSendConfirmURLStep,
-	StartWaitingConfirmStep,
+	StartSendConfirmCodeStep,
+	StartCheckConfirmCodeStep,
 	StartChangeCampusStep}

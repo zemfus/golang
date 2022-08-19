@@ -24,7 +24,8 @@ func NewBotAPI(bot *tg.BotAPI, connPool *pgxpool.Pool) Controller {
 		cmd.Start: service.NewStart,
 	}
 	srvsPost := map[chainer.StepHandle]service.NewServiceFunc{
-		chainer.StartSendConfirmURLStep: service.NewStart,
+		chainer.StartSendConfirmCodeStep:  service.NewStart,
+		chainer.StartCheckConfirmCodeStep: service.NewStart,
 	}
 	return &botAPI{
 		bot:          bot,

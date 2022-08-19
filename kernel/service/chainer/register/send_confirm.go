@@ -32,7 +32,7 @@ func (r *sendConfirmURL) SetNext(chainer chainer.Chainer) chainer.Chainer {
 var validEmail = regexp.MustCompile(`^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@((21-school|student.21-school).ru)$`)
 
 func (r sendConfirmURL) Handle(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
-	if int(chainer.StartSendConfirmURLStep) != user.HandleStep {
+	if int(chainer.StartSendConfirmCodeStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}
 	userEmail := r.opts.Update.Message.Text
@@ -40,7 +40,7 @@ func (r sendConfirmURL) Handle(ctx context.Context, user *models.User) (*tg.Mess
 	if validEmail.Match([]byte(userEmail)) {
 		msgReply.Text = "На твою почту в течении 5 минут придет письмо с кодом подтверждения, для продолжения регистрации введи код сюда."
 	} else {
-		msgReply.Text = "Невалидный адрес почти."
+		msgReply.Text = "Невалидный адрес почты."
 		return &msgReply, nil
 	}
 	rand.Seed(time.Now().UnixNano())
@@ -60,7 +60,7 @@ func (r sendConfirmURL) Handle(ctx context.Context, user *models.User) (*tg.Mess
 Твой код подтверждения:<br>
 <code>%d</code>`, userCode)
 
-	user.HandleStep = int(chainer.StartWaitingConfirmStep)
+	user.HandleStep = int(chainer.StartCheckConfirmCodeStep)
 
 	err = sendMail(confirmText, userEmail)
 	if err != nil {

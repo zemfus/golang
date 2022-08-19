@@ -31,7 +31,7 @@ func (r reqEmail) Handle(ctx context.Context, user *models.User) (*tg.MessageCon
 	var msgReply tg.MessageConfig
 	msgReply.Text = "Введи свою школьную почту, а затем пройди по ссылке в письме для авторизации."
 
-	user.HandleStep = int(chainer.StartSendConfirmURLStep)
+	user.HandleStep = int(chainer.StartSendConfirmCodeStep)
 	user.ID = int(r.opts.Update.Message.From.ID)
 	user.Role = models.Unknown
 

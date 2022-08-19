@@ -22,6 +22,7 @@ type User interface {
 type Session interface {
 	GetByID(ctx context.Context, id int) (*models.Session, error)
 	GetByUserID(ctx context.Context, userID int) (*models.Session, error)
+	ExistsByCodeAndUserID(ctx context.Context, userID int, code int) (bool, error)
 	Create(ctx context.Context, session *models.Session) error
 	Delete(ctx context.Context, ID int) error
 }
@@ -38,4 +39,8 @@ type Booking interface {
 
 	ExistByID(ctx context.Context, id int) (bool, error)
 	ExistByNickname(ctx context.Context, nickname string) (bool, error)
+}
+
+type Root interface {
+	GetAllCampuses(ctx context.Context) ([]models.Campus, error)
 }
