@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
-	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/joho/godotenv v1.4.0
 	github.com/qiangxue/fasthttp-routing v0.0.0-20160225050629-6ccdc2a18d87

@@ -48,13 +48,67 @@ func (u user) GetByID(ctx context.Context, id int) (*models.User, error) {
 }
 
 func (u user) GetAllByCampus(ctx context.Context, campus string) ([]models.User, error) {
-	//TODO implement me
-	panic("implement me")
+	rows, err := u.connPool.Query(ctx, `SELECT 
+    id, 
+    nickname, 
+    email, 
+    campus_id, 
+    role, 
+    handle_step 
+		FROM users WHERE campus_id = (SELECT 
+		                                  id
+		                              		FROM campus WHERE name=$1)`, campus)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users = []models.User{}
+
+	for rows.Next() {
+		var user = models.User{}
+		err = rows.Scan(&user.ID,
+			&user.Nickname,
+			&user.Email,
+			&user.CampusID,
+			&user.Role,
+			&user.HandleStep)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }
 
 func (u user) GetByNickname(ctx context.Context, nickname string) (*models.User, error) {
-	//TODO implement me
-	panic("implement me")
+	rows, err := u.connPool.Query(ctx, `SELECT
+		id,
+		nickname,
+		email,
+		campus_id,
+		role,
+		handle_step
+			FROM users WHERE nickname = $1`, nickname)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var user = models.User{}
+	if rows.Next() {
+		err = rows.Scan(&user.ID,
+			&user.Nickname,
+			&user.Email,
+			&user.CampusID,
+			&user.Role,
+			&user.HandleStep)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &user, nil
 }
 
 func (u user) Create(ctx context.Context, user *models.User) error {
@@ -94,16 +148,18 @@ func (u user) Update(ctx context.Context, user *models.User) error {
 }
 
 func (u user) Delete(ctx context.Context, ID int) error {
-	//TODO implement me
-	panic("implement me")
+	_, err := u.connPool.Exec(ctx, "DELETE FROM users WHERE id = $1", ID)
+	return err
 }
 
 func (u user) ExistByID(ctx context.Context, id int) (bool, error) {
-	//TODO implement me
-	panic("implement me")
+	var ex bool
+	err := u.connPool.QueryRow(ctx, "SELECT EXISTS (SELECT id FROM users WHERE id  = $1);", id).Scan(&ex)
+	return ex, err
 }
 
 func (u user) ExistByNickname(ctx context.Context, nickname string) (bool, error) {
-	//TODO implement me
-	panic("implement me")
+	var ex bool
+	err := u.connPool.QueryRow(ctx, "SELECT EXISTS (SELECT id FROM users WHERE nickname  = $1);", nickname).Scan(&ex)
+	return ex, err
 }
