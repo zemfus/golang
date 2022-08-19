@@ -26,6 +26,8 @@ func NewBotAPI(bot *tg.BotAPI, connPool *pgxpool.Pool) Controller {
 	srvsPost := map[chainer.StepHandle]service.NewServiceFunc{
 		chainer.StartSendConfirmCodeStep:  service.NewStart,
 		chainer.StartCheckConfirmCodeStep: service.NewStart,
+		chainer.StartChangeCampusStep:     service.NewStart,
+		chainer.StartSetCampusStep:        service.NewStart,
 	}
 	return &botAPI{
 		bot:          bot,
@@ -43,12 +45,13 @@ func (c botAPI) Process(ctx context.Context, opts *Opts) error {
 		userID = int(opts.Update.Message.From.ID)
 		text = opts.Update.Message.Text
 	} else {
-		userID = int(opts.Update.CallbackQuery.Message.From.ID)
+		userID = int(opts.Update.CallbackQuery.From.ID)
 		text = opts.Update.CallbackQuery.Message.Text
 	}
 
 	userRepo := repo.NewUser(c.connPool)
 	sessionRepo := repo.NewSession(c.connPool)
+	rootRepo := repo.NewRoot(c.connPool)
 	//TODO:: CHECK USER
 	user, err := userRepo.GetByID(ctx, userID)
 	if err != nil {
@@ -73,6 +76,7 @@ func (c botAPI) Process(ctx context.Context, opts *Opts) error {
 		UserRepo:    userRepo,
 		SessionRepo: sessionRepo,
 		Update:      opts.Update,
+		RootRepo:    rootRepo,
 	})
 	if err != nil {
 		return err

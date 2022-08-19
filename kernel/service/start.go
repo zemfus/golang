@@ -25,7 +25,7 @@ func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfi
 	user.HandleStep = chainer.CheckStepHandle(user.HandleStep, chainer.StartRequestEmailStep, // todo change StartRequestEmailStep
 		chainer.StartSteps...)
 
-	if s.opts.Update.Message.Text == string(models.Start) {
+	if s.opts.Update.Message != nil && s.opts.Update.Message.Text == string(models.Start) {
 		user.HandleStep = int(chainer.StartRequestEmailStep)
 	}
 
@@ -33,18 +33,25 @@ func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfi
 		UserRepo:    s.opts.UserRepo,
 		Update:      s.opts.Update,
 		SessionRepo: s.opts.SessionRepo,
+		RootRepo:    s.opts.RootRepo,
 	}
 
 	chain := register.NewReqEmail(opts)
 	chain.SetNext(register.NewSendConfirmURL(opts)).
-		SetNext(register.NewCheckCode(opts))
+		SetNext(register.NewCheckCode(opts)).
+		SetNext(register.NewSetCampus(opts))
 
 	msgReply, err := chain.Handle(ctx, user)
 	if err != nil {
 		return nil, err
 	}
 	//todo if callback
-	msgReply.ChatID = s.opts.Update.Message.From.ID
+
+	if s.opts.Update.Message != nil {
+		msgReply.ChatID = s.opts.Update.Message.From.ID
+	} else {
+		msgReply.ChatID = s.opts.Update.CallbackQuery.From.ID
+	}
 
 	return msgReply, nil
 }

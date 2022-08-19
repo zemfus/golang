@@ -12,6 +12,7 @@ type Opts struct {
 	UserRepo    repo.User
 	Update      *tg.Update
 	SessionRepo repo.Session
+	RootRepo    repo.Root
 }
 
 type Chainer interface {

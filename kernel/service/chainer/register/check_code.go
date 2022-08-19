@@ -54,14 +54,32 @@ func (r checkCode) Handle(ctx context.Context, user *models.User) (*tg.MessageCo
 	}
 
 	msgReply.Text = "Выбери кампус:"
-	user.HandleStep = int(chainer.StartChangeCampusStep)
+	campuses, err := r.opts.RootRepo.GetAllCampuses(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	//todo : getall campuses
+	if len(campuses) == 0 {
+		msgReply.Text = "Не определен кампус, обращайся к администраторам своего кампуса."
+		return &msgReply, nil
+	}
 
-	//err := r.opts.UserRepo.Create(ctx, user)
-	//if err != nil {
-	//	return nil, err
-	//}
+	rowsCampuses := make([][]tg.InlineKeyboardButton, 0, len(campuses))
+	for _, campus := range campuses {
+		row := tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData(campus.Name, strconv.Itoa(campus.ID)),
+		)
+		rowsCampuses = append(rowsCampuses, row)
+	}
+	msgReply.ReplyMarkup = tg.NewInlineKeyboardMarkup(rowsCampuses...)
+
+	user.Nickname = strings.Split(user.Email, "@")[0]
+	user.HandleStep = int(chainer.StartSetCampusStep)
+
+	err = r.opts.UserRepo.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
 
 	return &msgReply, nil
 }

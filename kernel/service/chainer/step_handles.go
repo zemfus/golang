@@ -9,6 +9,7 @@ const (
 	StartSendConfirmCodeStep // /start
 	StartCheckConfirmCodeStep
 	StartChangeCampusStep
+	StartSetCampusStep
 
 	CreateBookingReceiveDataStep // /create_booking
 	CreateBookingValidAndSetDataStep
@@ -28,4 +29,5 @@ var StartSteps = []StepHandle{
 	StartRequestEmailStep,
 	StartSendConfirmCodeStep,
 	StartCheckConfirmCodeStep,
-	StartChangeCampusStep}
+	StartChangeCampusStep,
+	StartSetCampusStep}
