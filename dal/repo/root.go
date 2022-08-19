@@ -102,7 +102,7 @@ func (r root) GetAllInventory(ctx context.Context) ([]models.Inventory, error) {
 }
 
 func (r root) UpdateInventory(ctx context.Context, inventory *models.Inventory) error {
-	_, err := inventory.connPool.Exec(ctx,
+	_, err := r.connPool.Exec(ctx,
 		`UPDATE inventory SET
 			name = $2,
 			description = $3,
