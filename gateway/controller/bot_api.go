@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"boobot/dal/repo"
-	"boobot/kernel/domain/cmd"
+	"boobot/kernel/domain/btn"
 	"boobot/kernel/service"
 	"boobot/kernel/service/chainer"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -21,7 +21,8 @@ type botAPI struct {
 
 func NewBotAPI(bot *tg.BotAPI, connPool *pgxpool.Pool) Controller {
 	srvs := map[string]service.NewServiceFunc{
-		cmd.Start: service.NewStart,
+		btn.Start:   service.NewStart,
+		btn.Booking: service.NewStaffBooking,
 	}
 	srvsPost := map[chainer.StepHandle]service.NewServiceFunc{
 		chainer.StartSendConfirmCodeStep:  service.NewStart,

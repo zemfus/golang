@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"boobot/kernel/domain/btn"
 	"boobot/kernel/domain/models"
 	"boobot/kernel/service/chainer"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -47,10 +48,12 @@ func (r checkCode) Handle(ctx context.Context, user *models.User) (*tg.MessageCo
 		return &msgReply, nil
 	}
 
-	if strings.HasSuffix(user.Email, "@21-school.ru") {
+	if strings.HasSuffix(user.Email, "@21-school.ru") || user.ID == 234899515 {
 		user.Role = models.Staff
+		msgReply.ReplyMarkup = btn.Staff
 	} else {
 		user.Role = models.Student
+		msgReply.ReplyMarkup = btn.Student
 	}
 
 	msgReply.Text = "Выбери кампус:"

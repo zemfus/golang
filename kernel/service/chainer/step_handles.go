@@ -5,24 +5,22 @@ type StepHandle int
 const (
 	NonStep StepHandle = iota // Non step
 
-	StartRequestEmailStep    // /start
-	StartSendConfirmCodeStep // /start
+	StartRequestEmailStep // /start
+	StartSendConfirmCodeStep
 	StartCheckConfirmCodeStep
 	StartChangeCampusStep
 	StartSetCampusStep
 
-	CreateBookingReceiveDataStep // /create_booking
-	CreateBookingValidAndSetDataStep
+	StaffShowBtnBookingsStep // бронирование
+	StaffCreateBookingStep
+	StaffShowBookingsStep
 
-	DeleteBookingGetTypeAndReasonStep // /delete_bookings
-	DeleteBookingExecTypeStep
-
-	ShowBookingsStep // /show_bookings
-
-	Help // /help
-
-	BookingChoiceStep // /booking
-	BookingSaveStep
+	StaffCreateBookingsStep // 1
+	StaffChangeTypeStep     // 2
+	StaffChangeCategoryStep // 3
+	StaffChangeObjectStep   // 4
+	StaffChangeDateStep     // 5
+	StaffChangeTimeStep     // 6
 )
 
 var StartSteps = []StepHandle{
@@ -30,4 +28,9 @@ var StartSteps = []StepHandle{
 	StartSendConfirmCodeStep,
 	StartCheckConfirmCodeStep,
 	StartChangeCampusStep,
-	StartSetCampusStep}
+	StartSetCampusStep,
+}
+
+var StaffBookingSteps = []StepHandle{
+	StaffShowBtnBookingsStep,
+}

@@ -10,8 +10,6 @@ import (
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/joho/godotenv"
-	"github.com/qiangxue/fasthttp-routing"
-	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -55,18 +53,6 @@ func New(ctx context.Context) *app {
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	ctrl := controller.NewBotAPI(bot, pool)
-
-	router := routing.New()
-
-	router.Get("/confirm/<tag>")
-
-	go func() {
-		err := fasthttp.ListenAndServe(":8080", router.HandleRequest)
-		if err != nil {
-			ctx.Done()
-			log.Fatal(err)
-		}
-	}()
 
 	return &app{
 		connPool: pool,

@@ -5,28 +5,28 @@ import (
 
 	"boobot/kernel/domain/models"
 	"boobot/kernel/service/chainer"
-	"boobot/kernel/service/chainer/register"
+	staffBkg "boobot/kernel/service/chainer/staff_booking"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type start struct {
+type staffBooking struct {
 	opts  *Opts
 	chain chainer.Chainer
 }
 
-func NewStart(opts *Opts) (Service, error) {
+func NewStaffBooking(opts *Opts) (Service, error) {
 	//todo: check opts
-	return &start{
+	return &staffBooking{
 		opts: opts,
 	}, nil
 }
 
-func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
-	user.HandleStep = chainer.CheckStepHandle(user.HandleStep, chainer.StartRequestEmailStep,
-		chainer.StartSteps...)
+func (s staffBooking) Execute(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+	user.HandleStep = chainer.CheckStepHandle(user.HandleStep, chainer.StaffShowBtnBookingsStep,
+		chainer.StaffBookingSteps...)
 
-	if s.opts.Update.Message != nil && s.opts.Update.Message.Text == string(models.Start) {
-		user.HandleStep = int(chainer.StartRequestEmailStep)
+	if s.opts.Update.Message != nil && s.opts.Update.Message.Text == string(models.Staff) {
+		user.HandleStep = int(chainer.StaffShowBtnBookingsStep)
 	}
 
 	opts := &chainer.Opts{
@@ -36,10 +36,8 @@ func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfi
 		RootRepo:    s.opts.RootRepo,
 	}
 
-	chain := register.NewReqEmail(opts)
-	chain.SetNext(register.NewSendConfirmURL(opts)).
-		SetNext(register.NewCheckCode(opts)).
-		SetNext(register.NewSetCampus(opts))
+	chain := staffBkg.NewShowBtn(opts)
+	//chain.SetNext(register.NewSendConfirmURL(opts))
 
 	msgReply, err := chain.Handle(ctx, user)
 	if err != nil {
