@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12.1
+    environment:
+      POSTGRES_USER: "boooot"
+      POSTGRES_PASSWORD: "Hello21boooot"
+      POSTGRES_DB: "postgres"
+    restart: always
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./scripts/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./deployment/data/postgres:/var/lib/postgresql/data
+#  app:
+#    build: ./
+#    restart: always
+#    depends_on:
+#      - postgres

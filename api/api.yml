@@ -1,0 +1,65 @@
+
+
+roles:
+  - staff
+  - student
+  - applicant
+
+registration:
+  commands:
+    - '/start'
+  permission:
+    - staff
+    - student
+    - applicant
+  description: старт и регистрация пользователя
+
+category:
+  commands:
+  - '/get_categories'
+  - '/update_category'
+  - '/create_category'
+  - '/delete_category'
+  permission:
+    - staff
+  description: управления категориями
+
+booking:
+  commands:
+    - '/booking'
+    - '/cancel_booking'
+  permission:
+    - staff
+    - student
+    - applicant**
+  description: бронирование
+
+object:
+  commands:
+    - '/create_object'
+    - '/delete_object'
+    - '/update_object'
+    - '/get_objects'
+  permission:
+    - staff
+  description: Управления объектами
+
+inventory:
+  commands:
+    - '/create_object'
+    - '/delete_object'
+    - '/update_object'
+    - '/get_objects'
+  permission:
+    - staff
+  description: Управления инвентарем
+
+table_games:
+  commands:
+    - '/create_game'
+    - '/delete_game'
+    - '/update_game'
+    - '/get_games'
+  permission:
+    - staff
+  description: Управления настольными играми

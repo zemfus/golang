@@ -1,0 +1,26 @@
+image: golang:latest
+
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  only:
+    - master
+  stage: test
+  script:
+    - go fmt ./...
+    - go vet ./...
+    - go test ./...
+
+build:
+  only:
+    - master
+  stage: build
+  script:
+    - mkdir -p build
+    - go build .
+  artifacts:
+    paths:
+      - build

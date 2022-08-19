@@ -1,0 +1,7 @@
+
+deploy:
+  only:
+    - master
+  stage: deploy
+  script:
+    ./build/app
