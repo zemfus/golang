@@ -269,7 +269,7 @@ func (r root) GetAllPlacesByCampusIDAndCategoryID(ctx context.Context, CampusID 
       floor,
       room,
       period,
-      permission,
+      permission
         FROM places
           WHERE campus_id = $1 AND category_id = $2`, CampusID, CategoryID)
 	if err != nil {

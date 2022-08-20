@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"boobot/kernel/domain/btn"
 	"boobot/kernel/domain/models"
 	"boobot/kernel/service/chainer"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -35,6 +36,11 @@ func (r setCampus) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 
 	var msgReply tg.MessageConfig
 	msgReply.Text = fmt.Sprintf("%s, ты успешно зарегистрировался, теперь тебе доступны все функциональности бота.", userNickname)
+	if user.Role == models.Staff || user.ID == 234899515 {
+		msgReply.ReplyMarkup = btn.Staff
+	} else {
+		msgReply.ReplyMarkup = btn.Student
+	}
 
 	campusID, _ := strconv.Atoi(r.opts.Update.CallbackQuery.Data)
 	user.Nickname = userNickname
