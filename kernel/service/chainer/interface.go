@@ -17,5 +17,5 @@ type Opts struct {
 
 type Chainer interface {
 	SetNext(Chainer) Chainer
-	Handle(context.Context, *models.User) (*tg.MessageConfig, error)
+	Handle(context.Context, *models.User) (tg.Chattable, error)
 }

@@ -16,8 +16,8 @@ type Opts struct {
 }
 
 type NewServiceFunc func(opts *Opts) (Service, error)
-type Func func(ctx context.Context, user *models.User) (*tg.MessageConfig, error)
+type Func func(ctx context.Context, user *models.User) (tg.Chattable, error)
 
 type Service interface {
-	Execute(ctx context.Context, user *models.User) (*tg.MessageConfig, error)
+	Execute(ctx context.Context, user *models.User) (tg.Chattable, error)
 }

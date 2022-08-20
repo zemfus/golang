@@ -25,7 +25,7 @@ func (r *setCampus) SetNext(chainer chainer.Chainer) chainer.Chainer {
 	return chainer
 }
 
-func (r setCampus) Handle(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (r setCampus) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	if int(chainer.StartSetCampusStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}

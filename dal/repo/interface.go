@@ -51,6 +51,9 @@ type Root interface {
 	CreateCategory(ctx context.Context, Category string) error
 	GetAllCategory(ctx context.Context) ([]models.Category, error)
 	DeleteCategory(ctx context.Context, ID int) error
+
+	GetAllPlacesByCampusIDAndCategoryID(ctx context.Context, CampusID int, CategoryID int) ([]models.Places, error)
+	GetAllInventoryByCampusIDAndCategoryID(ctx context.Context, CampusID int, CategoryID int) ([]models.Inventory, error)
 }
 
 //CREATE get update delete

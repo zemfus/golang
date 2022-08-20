@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"boobot/kernel/domain/btn"
 	"boobot/kernel/domain/models"
 	"boobot/kernel/service/chainer"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -25,13 +24,12 @@ func (r *showBtn) SetNext(chainer chainer.Chainer) chainer.Chainer {
 	return chainer
 }
 
-func (r showBtn) Handle(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (r showBtn) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	if int(chainer.StaffShowBtnBookingsStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}
 
 	var msgReply tg.MessageConfig
-	msgReply.Text = btn.Booking
 
 	var staffKeyboard = tg.NewInlineKeyboardMarkup(
 		tg.NewInlineKeyboardRow(
@@ -42,8 +40,11 @@ func (r showBtn) Handle(ctx context.Context, user *models.User) (*tg.MessageConf
 
 	msgReply.ReplyMarkup = staffKeyboard
 
-	//todo push steps
-	//user.HandleStep = int(chainer.NonStep)
+	user.HandleStep = int(chainer.StaffProxyCreateVSShow)
+	err := r.opts.UserRepo.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
 
 	return &msgReply, nil
 }

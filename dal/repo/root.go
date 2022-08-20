@@ -18,7 +18,7 @@ func NewRoot(connPool *pgxpool.Pool) Root {
 }
 
 func (r root) GetAllCampuses(ctx context.Context) ([]models.Campus, error) {
-	rows, err := r.connPool.Query(ctx, "SELECT id, name FROM Campus")
+	rows, err := r.connPool.Query(ctx, "SELECT id, name FROM CampusID")
 	if err != nil {
 		return nil, err
 	}
@@ -112,8 +112,8 @@ func (r root) UpdateInventory(ctx context.Context, inventory *models.Inventory) 
 		WHERE id = $6`,
 		inventory.Name,
 		inventory.Description,
-		inventory.Campus,
-		inventory.Category,
+		inventory.CampusID,
+		inventory.CategoryID,
 		inventory.ID)
 
 	return err
@@ -135,7 +135,7 @@ func (r root) CreateInventory(ctx context.Context, inventory *models.Inventory) 
 	}
 	_, err = r.connPool.Exec(ctx,
 		"INSERT INTO inventory(id, name, description, campus_id, category_id) VALUES($1, $2, $3, $4, $5)",
-		inventory.ID, inventory.Description, inventory.Campus, inventory.Category)
+		inventory.ID, inventory.Description, inventory.CampusID, inventory.CategoryID)
 
 	return err
 }
@@ -158,12 +158,77 @@ func (r root) GetInventoryByID(ctx context.Context, ID int) (*models.Inventory, 
 		err = rows.Scan(&inventory.ID,
 			&inventory.Name,
 			&inventory.Description,
-			&inventory.Campus,
-			&inventory.Category)
+			&inventory.CampusID,
+			&inventory.CategoryID)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	return &inventory, nil
+}
+
+func (r root) GetAllPlacesByCampusIDAndCategoryID(ctx context.Context, CampusID int, CategoryID int) ([]models.Places, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT 
+      id 
+      name 
+      description 
+      campus_id 
+      category_id 
+      floor room 
+        FROM plases
+          WHERE campus_id = $1 and category_id = $2`, CampusID, CategoryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var places []models.Places
+
+	for rows.Next() {
+		var place = models.Places{}
+		err = rows.Scan(&place.ID,
+			&place.Name,
+			&place.Description,
+			&place.CampusID,
+			&place.CategoryID,
+			&place.Room)
+		if err != nil {
+			return nil, err
+		}
+		places = append(places, place)
+	}
+	return places, nil
+}
+
+func (r root) GetAllInventoryByCampusIDAndCategoryID(ctx context.Context, CampusID int, CategoryID int) ([]models.Inventory, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT 
+      id 
+      name 
+      description 
+      campus_id 
+      category_id 
+        FROM inventory
+          WHERE campus_id = $1 and category_id = $2`, CampusID, CategoryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var inventories = []models.Inventory{}
+
+	for rows.Next() {
+		var inventory = models.Inventory{}
+		err = rows.Scan(&inventory.ID,
+			&inventory.Name,
+			&inventory.Description,
+			&inventory.CampusID,
+			&inventory.CategoryID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		inventories = append(inventories, inventory)
+	}
+	return inventories, nil
 }

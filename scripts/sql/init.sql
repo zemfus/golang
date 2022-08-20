@@ -78,6 +78,7 @@ CREATE TABLE bookings
     inventory_id INTEGER REFERENCES inventory (id) ON DELETE CASCADE,
     places_id    INTEGER REFERENCES places (id) ON DELETE CASCADE,
     confirm      BOOLEAN      NOT NULL DEFAULT FALSE,
+    status      BOOLEAN      NOT NULL DEFAULT FALSE,
     start_at     TIMESTAMP    NOT NULL,
     end_at       TIMESTAMP    NOT NULL,
     create_at    TIMESTAMP    NOT NULL DEFAULT now(),

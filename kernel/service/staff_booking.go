@@ -21,7 +21,7 @@ func NewStaffBooking(opts *Opts) (Service, error) {
 	}, nil
 }
 
-func (s staffBooking) Execute(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (s staffBooking) Execute(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	user.HandleStep = chainer.CheckStepHandle(user.HandleStep, chainer.StaffShowBtnBookingsStep,
 		chainer.StaffBookingSteps...)
 
@@ -42,12 +42,6 @@ func (s staffBooking) Execute(ctx context.Context, user *models.User) (*tg.Messa
 	msgReply, err := chain.Handle(ctx, user)
 	if err != nil {
 		return nil, err
-	}
-
-	if s.opts.Update.Message != nil {
-		msgReply.ChatID = s.opts.Update.Message.From.ID
-	} else {
-		msgReply.ChatID = s.opts.Update.CallbackQuery.From.ID
 	}
 
 	return msgReply, nil

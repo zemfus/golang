@@ -29,10 +29,20 @@ type Category struct {
 	Name string `json:"name"`
 }
 
+type Places struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	CampusID    int    `json:"campus_id"`
+	CategoryID  int    `json:"category_id"`
+	Floor       int    `json:"floor"`
+	Room        int    `json:"room"`
+}
+
 type Inventory struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Campus      int    `json:"campus_id"`
-	Category    int    `json:"category_id"`
+	CampusID    int    `json:"campus_id"`
+	CategoryID  int    `json:"category_id"`
 }

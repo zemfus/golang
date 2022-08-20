@@ -31,7 +31,7 @@ func (r *sendConfirmURL) SetNext(chainer chainer.Chainer) chainer.Chainer {
 
 var validEmail = regexp.MustCompile(`^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@((21-school|student.21-school).ru)$`)
 
-func (r sendConfirmURL) Handle(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (r sendConfirmURL) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	if int(chainer.StartSendConfirmCodeStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}

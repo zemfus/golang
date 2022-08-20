@@ -12,6 +12,7 @@ const (
 	StartSetCampusStep
 
 	StaffShowBtnBookingsStep // бронирование
+	StaffProxyCreateVSShow
 	StaffCreateBookingStep
 	StaffShowBookingsStep
 

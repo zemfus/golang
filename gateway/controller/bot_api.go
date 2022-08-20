@@ -88,6 +88,23 @@ func (c botAPI) Process(ctx context.Context, opts *Opts) error {
 		return err
 	}
 
+	if opts.Update.Message != nil {
+		switch ms := msgReply.(type) {
+		case *tg.MessageConfig:
+			ms.ChatID = opts.Update.Message.From.ID
+		case *tg.EditMessageReplyMarkupConfig:
+			ms.ChatID = opts.Update.Message.From.ID
+		}
+	} else {
+		switch ms := msgReply.(type) {
+		case *tg.MessageConfig:
+			ms.ChatID = opts.Update.CallbackQuery.From.ID
+
+		case *tg.EditMessageReplyMarkupConfig:
+			ms.ChatID = opts.Update.CallbackQuery.From.ID
+		}
+	}
+
 	// todo retry
 	_, err = c.bot.Send(msgReply)
 	if err != nil {

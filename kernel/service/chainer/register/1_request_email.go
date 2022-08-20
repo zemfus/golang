@@ -23,7 +23,7 @@ func (r *reqEmail) SetNext(chainer chainer.Chainer) chainer.Chainer {
 	return chainer
 }
 
-func (r reqEmail) Handle(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (r reqEmail) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	if int(chainer.StartRequestEmailStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}

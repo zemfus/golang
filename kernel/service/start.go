@@ -21,7 +21,7 @@ func NewStart(opts *Opts) (Service, error) {
 	}, nil
 }
 
-func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (s start) Execute(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	user.HandleStep = chainer.CheckStepHandle(user.HandleStep, chainer.StartRequestEmailStep,
 		chainer.StartSteps...)
 
@@ -44,12 +44,6 @@ func (s start) Execute(ctx context.Context, user *models.User) (*tg.MessageConfi
 	msgReply, err := chain.Handle(ctx, user)
 	if err != nil {
 		return nil, err
-	}
-
-	if s.opts.Update.Message != nil {
-		msgReply.ChatID = s.opts.Update.Message.From.ID
-	} else {
-		msgReply.ChatID = s.opts.Update.CallbackQuery.From.ID
 	}
 
 	return msgReply, nil

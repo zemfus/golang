@@ -26,7 +26,7 @@ func (r *checkCode) SetNext(chainer chainer.Chainer) chainer.Chainer {
 	return chainer
 }
 
-func (r checkCode) Handle(ctx context.Context, user *models.User) (*tg.MessageConfig, error) {
+func (r checkCode) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
 	if int(chainer.StartCheckConfirmCodeStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}
