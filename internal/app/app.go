@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"boobot/gateway/controller"
+	"github.com/MakhmudEgo/boolib/gateway/controller"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/joho/godotenv"
