@@ -29,6 +29,14 @@ func NewBotAPI(bot *tg.BotAPI, connPool *pgxpool.Pool) Controller {
 		chainer.StartCheckConfirmCodeStep: service.NewStart,
 		chainer.StartChangeCampusStep:     service.NewStart,
 		chainer.StartSetCampusStep:        service.NewStart,
+
+		chainer.StaffShowBtnBookingsStep: service.NewStaffBooking,
+		chainer.StaffProxyCreateVSShow:   service.NewStaffBooking,
+		chainer.StaffChangeTypeStep:      service.NewStaffBooking,
+		chainer.StaffChangeCategoryStep:  service.NewStaffBooking,
+		chainer.StaffChangeObjectStep:    service.NewStaffBooking,
+		chainer.StaffChangeDateStep:      service.NewStaffBooking,
+		chainer.StaffChangeTimeStep:      service.NewStaffBooking,
 	}
 	return &botAPI{
 		bot:          bot,
@@ -92,16 +100,16 @@ func (c botAPI) Process(ctx context.Context, opts *Opts) error {
 		switch ms := msgReply.(type) {
 		case *tg.MessageConfig:
 			ms.ChatID = opts.Update.Message.From.ID
-		case *tg.EditMessageReplyMarkupConfig:
-			ms.ChatID = opts.Update.Message.From.ID
+			//case *tg.EditMessageReplyMarkupConfig:
+			//	ms.ChatID = opts.Update.Message.From.ID
 		}
 	} else {
 		switch ms := msgReply.(type) {
 		case *tg.MessageConfig:
 			ms.ChatID = opts.Update.CallbackQuery.From.ID
 
-		case *tg.EditMessageReplyMarkupConfig:
-			ms.ChatID = opts.Update.CallbackQuery.From.ID
+			//case *tg.EditMessageReplyMarkupConfig:
+			//	ms.ChatID = opts.Update.CallbackQuery.From.ID
 		}
 	}
 

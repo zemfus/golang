@@ -34,7 +34,7 @@ func (r changeCategory) Handle(ctx context.Context, user *models.User) (tg.Chatt
 
 	bookType := r.opts.Update.CallbackQuery.Data
 
-	categories, err := r.opts.RootRepo.GetAllCategory(ctx)
+	categories, err := r.opts.RootRepo.GetAllCategoryByCampusID(ctx, 0)
 	if err != nil {
 		return nil, err
 	}

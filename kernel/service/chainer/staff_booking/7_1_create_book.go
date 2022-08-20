@@ -10,25 +10,23 @@ import (
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type changeTime struct {
+type createBook struct {
 	opts *chainer.Opts
 	next chainer.Chainer
 }
 
-func NewChangeTime(opts *chainer.Opts) chainer.Chainer {
-	return &changeTime{opts: opts}
+func NewCreateBook(opts *chainer.Opts) chainer.Chainer {
+	return &createBook{opts: opts}
 }
 
-func (r *changeTime) SetNext(chainer chainer.Chainer) chainer.Chainer {
+func (r *createBook) SetNext(chainer chainer.Chainer) chainer.Chainer {
 	r.next = chainer
 
 	return chainer
 }
 
-var timePattern = "15:04"
-
-func (r changeTime) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
-	if int(chainer.StaffChangeDateStep) != user.HandleStep {
+func (r createBook) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
+	if int(chainer.StaffChangeTimeStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}
 

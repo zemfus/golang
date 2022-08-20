@@ -31,8 +31,8 @@ VALUES ('Москва'),
 CREATE TABLE Sessions
 (
     id         SERIAL PRIMARY KEY,
-    user_id    BIGINT REFERENCES users (id) ON DELETE SET NULL,
-    code       int      NOT NULL,
+    user_id    BIGINT    REFERENCES users (id) ON DELETE SET NULL,
+    code       int       NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     end_at     TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -45,6 +45,10 @@ CREATE TABLE category
     update_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+INSERT INTO category(name)
+VALUES ('Переговорные'),
+       ('Кухни'),
+       ('Игровые');
 
 CREATE TABLE places
 (
@@ -55,9 +59,16 @@ CREATE TABLE places
     category_id INTEGER REFERENCES category (id) ON DELETE CASCADE,
     floor       INTEGER   NOT NULL,
     room        INTEGER   NOT NULL,
+    period      INTERVAL,
+    permission  ROLE      NOT NULL DEFAULT 'student',
     create_at   TIMESTAMP NOT NULL DEFAULT now(),
     update_at   TIMESTAMP NOT NULL DEFAULT now()
 );
+INSERT INTO places(name, description, campus_id, category_id, floor, room, period, permission)
+VALUES ('Плазма', 'Большая переговорная с телевизором и интерактивной доской', 1, 1, 1, 100, '1 hours'::interval,
+        'student'),
+       ('Кухня X', 'Кухня для АДМ', 1, 2, 3, 313, 'hour 1', 'student'),
+       ('Игровая Люси', 'Игровая с пс4', 1, 3, 2, 213, 'hour 1', 'student');
 
 CREATE TABLE inventory
 (
@@ -66,6 +77,8 @@ CREATE TABLE inventory
     description VARCHAR   NOT NULL,
     campus_id   INTEGER REFERENCES campus (id) ON DELETE CASCADE,
     category_id INTEGER REFERENCES category (id) ON DELETE CASCADE,
+    period      INTERVAL,
+    permission  ROLE      NOT NULL DEFAULT 'student',
     create_at   TIMESTAMP NOT NULL DEFAULT now(),
     update_at   TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -75,10 +88,10 @@ CREATE TABLE bookings
     id           SERIAL PRIMARY KEY,
     user_id      BIGINT REFERENCES users (id) ON DELETE CASCADE,
     type         BOOKING_TYPE NOT NULL,
-    inventory_id INTEGER REFERENCES inventory (id) ON DELETE CASCADE,
-    places_id    INTEGER REFERENCES places (id) ON DELETE CASCADE,
+    inventory_id INTEGER               DEFAULT 0 REFERENCES inventory (id) ON DELETE CASCADE,
+    places_id    INTEGER               DEFAULT 0 REFERENCES places (id) ON DELETE CASCADE,
     confirm      BOOLEAN      NOT NULL DEFAULT FALSE,
-    status      BOOLEAN      NOT NULL DEFAULT FALSE,
+    status       BOOLEAN      NOT NULL DEFAULT FALSE,--staff
     start_at     TIMESTAMP    NOT NULL,
     end_at       TIMESTAMP    NOT NULL,
     create_at    TIMESTAMP    NOT NULL DEFAULT now(),

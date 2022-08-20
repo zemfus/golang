@@ -3,6 +3,6 @@ package models
 type Command string
 
 const (
-	Start Command = "/start" //
-
+	Start        Command = "/start" //
+	StaffBooking         = ""
 )

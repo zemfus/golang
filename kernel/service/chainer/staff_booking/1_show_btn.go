@@ -31,9 +31,10 @@ func (r showBtn) Handle(ctx context.Context, user *models.User) (tg.Chattable, e
 
 	var msgReply tg.MessageConfig
 
+	msgReply.Text = "Бронирование:"
 	var staffKeyboard = tg.NewInlineKeyboardMarkup(
 		tg.NewInlineKeyboardRow(
-			tg.NewInlineKeyboardButtonData("Создать", fmt.Sprint(chainer.StaffCreateBookingsStep)),
+			tg.NewInlineKeyboardButtonData("Создать", fmt.Sprint(chainer.StaffChangeTypeStep)),
 			tg.NewInlineKeyboardButtonData("Просмотреть", fmt.Sprint(chainer.StaffShowBookingsStep)),
 		),
 	)

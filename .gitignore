@@ -18,3 +18,4 @@
 
 deployment/data
 configs/.env
+*.log

@@ -3,6 +3,7 @@ package register
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"boobot/kernel/domain/models"
@@ -35,7 +36,9 @@ func (r setCampus) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 	var msgReply tg.MessageConfig
 	msgReply.Text = fmt.Sprintf("%s, ты успешно зарегистрировался, теперь тебе доступны все функциональности бота.", userNickname)
 
+	campusID, _ := strconv.Atoi(r.opts.Update.CallbackQuery.Data)
 	user.Nickname = userNickname
+	user.CampusID = &campusID
 	user.HandleStep = int(chainer.NonStep)
 
 	err := r.opts.UserRepo.Update(ctx, user)

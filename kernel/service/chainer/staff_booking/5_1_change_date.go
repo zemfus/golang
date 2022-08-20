@@ -66,7 +66,7 @@ func (r changeDate) Handle(ctx context.Context, user *models.User) (tg.Chattable
 	}
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери число:", tg.NewInlineKeyboardMarkup(rows...))
 
-	user.HandleStep = int(chainer.StaffChangeDateStep)
+	user.HandleStep = int(chainer.StaffChangeTimeStep)
 	err := r.opts.UserRepo.Update(ctx, user)
 	if err != nil {
 		return nil, err
