@@ -34,12 +34,13 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 	chatID := r.opts.Update.CallbackQuery.From.ID
 	msgID := r.opts.Update.CallbackQuery.Message.MessageID
 
-	bookTypeAndCat := r.opts.Update.CallbackQuery.Data
+	CmdAndBookTypeAndCat := r.opts.Update.CallbackQuery.Data
+	_, bookTypeAndCat, _ := strings.Cut(CmdAndBookTypeAndCat, "$")
 	bookTypeAndCatSL := strings.Split(r.opts.Update.CallbackQuery.Data, "$")
-	categoryID, _ := strconv.Atoi(bookTypeAndCatSL[1])
+	categoryID, _ := strconv.Atoi(bookTypeAndCatSL[2])
 
 	var msgReply tg.EditMessageTextConfig
-	if bookTypeAndCatSL[0] == string(models.PlacesType) {
+	if bookTypeAndCatSL[1] == string(models.PlacesType) {
 		places, err := r.opts.RootRepo.GetAllPlacesByCampusIDAndCategoryID(ctx, *user.CampusID, categoryID)
 		if err != nil {
 			return nil, err
@@ -50,7 +51,7 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 
 		rows := make([][]tg.InlineKeyboardButton, 0, len(places))
 		for _, place := range places {
-			data := fmt.Sprintf("%s$%d$", bookTypeAndCat, place.ID)
+			data := fmt.Sprintf("%d$%s$%d", chainer.StaffChangeDateStep, bookTypeAndCat, place.ID)
 			row := tg.NewInlineKeyboardRow(
 				tg.NewInlineKeyboardButtonData(place.Name, data),
 			)
@@ -77,11 +78,11 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 		msgReply = tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери инвентарь:", tg.NewInlineKeyboardMarkup(rows...))
 	}
 
-	user.HandleStep = int(chainer.StaffChangeDateStep)
-	err := r.opts.UserRepo.Update(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+	//user.HandleStep = int(chainer.StaffChangeDateStep)
+	//err := r.opts.UserRepo.Update(ctx, user)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &msgReply, nil
 }

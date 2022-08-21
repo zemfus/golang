@@ -42,7 +42,9 @@ func (r setCampus) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 		msgReply.ReplyMarkup = btn.Student
 	}
 
-	campusID, _ := strconv.Atoi(r.opts.Update.CallbackQuery.Data)
+	stepAndCampus := strings.Split(r.opts.Update.CallbackQuery.Data, "$")
+	campusID, _ := strconv.Atoi(stepAndCampus[1])
+
 	user.Nickname = userNickname
 	user.CampusID = &campusID
 	user.HandleStep = int(chainer.NonStep)

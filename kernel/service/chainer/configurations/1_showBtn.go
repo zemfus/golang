@@ -1,4 +1,4 @@
-package staffBooking
+package configurations
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func (r *showBtn) SetNext(chainer chainer.Chainer) chainer.Chainer {
 }
 
 func (r showBtn) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
-	if int(chainer.StaffShowBtnBookingsStep) != user.HandleStep {
+	if int(chainer.CfgShowBtn) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}
 
@@ -34,18 +34,25 @@ func (r showBtn) Handle(ctx context.Context, user *models.User) (tg.Chattable, e
 	msgReply.Text = "Бронирование:"
 	var staffKeyboard = tg.NewInlineKeyboardMarkup(
 		tg.NewInlineKeyboardRow(
-			tg.NewInlineKeyboardButtonData("Создать", fmt.Sprintf("%d$%d", chainer.StaffProxyCreateVSShow, chainer.StaffChangeTypeStep)),
-			tg.NewInlineKeyboardButtonData("Просмотреть", fmt.Sprintf("%d$%d", chainer.StaffProxyCreateVSShow, chainer.StaffShowBookingsStep)),
+			tg.NewInlineKeyboardButtonData("Кампусы", fmt.Sprint(chainer.StaffChangeTypeStep)),
+			tg.NewInlineKeyboardButtonData("Категории", fmt.Sprint(chainer.StaffShowBookingsStep)),
+		),
+		tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Помещения", fmt.Sprint(chainer.StaffChangeTypeStep)),
+			tg.NewInlineKeyboardButtonData("Инвентарь", fmt.Sprint(chainer.StaffShowBookingsStep)),
+		),
+		tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Студенты", fmt.Sprint(chainer.StaffChangeTypeStep)),
 		),
 	)
 
 	msgReply.ReplyMarkup = staffKeyboard
 
-	//user.HandleStep = int(chainer.StaffProxyCreateVSShow)
-	//err := r.opts.UserRepo.Update(ctx, user)
-	//if err != nil {
-	//	return nil, err
-	//}
+	user.HandleStep = int(chainer.CfgProxyItems)
+	err := r.opts.UserRepo.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
 
 	return &msgReply, nil
 }

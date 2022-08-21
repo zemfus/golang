@@ -100,8 +100,8 @@ func (r root) CreateCategory(ctx context.Context, category *models.Category) err
 	return err
 }
 
-func (r root) GetAllCategoryByCampusID(ctx context.Context, ID int) ([]models.Category, error) {
-	rows, err := r.connPool.Query(ctx, `SELECT id, name FROM category `)
+func (r root) GetAllCategoryByBookType(ctx context.Context, bookType models.BookType) ([]models.Category, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT id, name FROM category WHERE type = $1`, bookType)
 	if err != nil {
 		return nil, err
 	}

@@ -40,15 +40,17 @@ CREATE TABLE Sessions
 CREATE TABLE category
 (
     id        SERIAL PRIMARY KEY,
-    name      VARCHAR   NOT NULL,
-    create_at TIMESTAMP NOT NULL DEFAULT now(),
-    update_at TIMESTAMP NOT NULL DEFAULT now()
+    name      VARCHAR      NOT NULL,
+    type      BOOKING_TYPE NOT NULL,
+    create_at TIMESTAMP    NOT NULL DEFAULT now(),
+    update_at TIMESTAMP    NOT NULL DEFAULT now()
 );
 
-INSERT INTO category(name)
-VALUES ('Переговорные'),
-       ('Кухни'),
-       ('Игровые');
+INSERT INTO category(name, type)
+VALUES ('Переговорные', 'places'),
+       ('Кухни', 'places'),
+       ('Игровые', 'places'),
+       ('книги', 'inventory');
 
 CREATE TABLE places
 (

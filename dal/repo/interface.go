@@ -43,7 +43,7 @@ type Root interface {
 	CreateInventory(ctx context.Context, inventory *models.Inventory) error
 	GetInventoryByID(ctx context.Context, ID int) (*models.Inventory, error)
 
-	GetAllCategoryByCampusID(ctx context.Context, ID int) ([]models.Category, error)
+	GetAllCategoryByBookType(ctx context.Context, bookType models.BookType) ([]models.Category, error)
 	CreateCategory(ctx context.Context, category *models.Category) error
 	DeleteCategory(ctx context.Context, ID int) error
 	UpdateCategory(ctx context.Context, category *models.Category) error

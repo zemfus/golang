@@ -3,6 +3,7 @@ package staffBooking
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	"boobot/kernel/domain/models"
 	"boobot/kernel/service/chainer"
@@ -29,7 +30,8 @@ func (r proxyCreateVSShow) Handle(ctx context.Context, user *models.User) (tg.Ch
 		return r.next.Handle(ctx, user)
 	}
 
-	step, _ := strconv.Atoi(r.opts.Update.CallbackQuery.Data)
+	proxyAndCmd := strings.Split(r.opts.Update.CallbackQuery.Data, "$")
+	step, _ := strconv.Atoi(proxyAndCmd[1])
 	var ch chainer.Chainer
 
 	if int(chainer.StaffChangeTypeStep) == step {

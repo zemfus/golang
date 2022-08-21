@@ -34,18 +34,18 @@ func (r changeType) Handle(ctx context.Context, user *models.User) (tg.Chattable
 
 	var keyboardBookingType = tg.NewInlineKeyboardMarkup(
 		tg.NewInlineKeyboardRow(
-			tg.NewInlineKeyboardButtonData("Помещение", fmt.Sprint(models.PlacesType)),
-			tg.NewInlineKeyboardButtonData("Инвентарь", fmt.Sprint(models.InventoryType)),
+			tg.NewInlineKeyboardButtonData("Помещение", fmt.Sprintf("%d$%s", chainer.StaffChangeCategoryStep, models.PlacesType)),
+			tg.NewInlineKeyboardButtonData("Инвентарь", fmt.Sprintf("%d$%s", chainer.StaffChangeCategoryStep, models.InventoryType)),
 		),
 	)
 
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери тип:", keyboardBookingType)
 
-	user.HandleStep = int(chainer.StaffChangeCategoryStep)
-	err := r.opts.UserRepo.Update(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+	//user.HandleStep = int(chainer.StaffChangeCategoryStep)
+	//err := r.opts.UserRepo.Update(ctx, user)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &msgReply, nil
 }

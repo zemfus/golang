@@ -14,6 +14,17 @@ const (
 	Status        = "Статус"
 )
 
+var AllCmds = map[string]bool{
+	Start:         true,
+	Booking:       true,
+	MyBooking:     true,
+	Requests:      true,
+	Configuration: true,
+	Events:        true,
+	Subscriptions: true,
+	Status:        true,
+}
+
 var Staff = tg.NewReplyKeyboard(
 	tg.NewKeyboardButtonRow(
 		tg.NewKeyboardButton(Booking),

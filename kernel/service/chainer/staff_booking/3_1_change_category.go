@@ -3,6 +3,7 @@ package staffBooking
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"boobot/kernel/domain/models"
 	"boobot/kernel/service/chainer"
@@ -32,9 +33,9 @@ func (r changeCategory) Handle(ctx context.Context, user *models.User) (tg.Chatt
 	chatID := r.opts.Update.CallbackQuery.From.ID
 	msgID := r.opts.Update.CallbackQuery.Message.MessageID
 
-	bookType := r.opts.Update.CallbackQuery.Data
+	bookType := strings.Split(r.opts.Update.CallbackQuery.Data, "$")[1]
 
-	categories, err := r.opts.RootRepo.GetAllCategoryByCampusID(ctx, 0)
+	categories, err := r.opts.RootRepo.GetAllCategoryByBookType(ctx, models.BookType(bookType))
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +45,7 @@ func (r changeCategory) Handle(ctx context.Context, user *models.User) (tg.Chatt
 
 	rows := make([][]tg.InlineKeyboardButton, 0, len(categories))
 	for _, category := range categories {
-		data := fmt.Sprintf("%s$%d", bookType, category.ID)
+		data := fmt.Sprintf("%d$%s$%d", chainer.StaffChangeObjectStep, bookType, category.ID)
 		row := tg.NewInlineKeyboardRow(
 			tg.NewInlineKeyboardButtonData(category.Name, data),
 		)
@@ -52,11 +53,11 @@ func (r changeCategory) Handle(ctx context.Context, user *models.User) (tg.Chatt
 	}
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери Категорию:", tg.NewInlineKeyboardMarkup(rows...))
 
-	user.HandleStep = int(chainer.StaffChangeObjectStep)
-	err = r.opts.UserRepo.Update(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+	//user.HandleStep = int(chainer.StaffChangeObjectStep)
+	//err = r.opts.UserRepo.Update(ctx, user)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &msgReply, nil
 }

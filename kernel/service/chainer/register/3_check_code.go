@@ -2,6 +2,7 @@ package register
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -70,14 +71,15 @@ func (r checkCode) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 	rowsCampuses := make([][]tg.InlineKeyboardButton, 0, len(campuses))
 	for _, campus := range campuses {
 		row := tg.NewInlineKeyboardRow(
-			tg.NewInlineKeyboardButtonData(campus.Name, strconv.Itoa(campus.ID)),
+			tg.NewInlineKeyboardButtonData(campus.Name,
+				fmt.Sprintf("%d$%s", chainer.StartSetCampusStep, strconv.Itoa(campus.ID))),
 		)
 		rowsCampuses = append(rowsCampuses, row)
 	}
 	msgReply.ReplyMarkup = tg.NewInlineKeyboardMarkup(rowsCampuses...)
 
 	user.Nickname = strings.Split(user.Email, "@")[0]
-	user.HandleStep = int(chainer.StartSetCampusStep)
+	user.HandleStep = int(chainer.NonStep)
 
 	err = r.opts.UserRepo.Update(ctx, user)
 	if err != nil {
