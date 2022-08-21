@@ -29,9 +29,7 @@ func (r showBtn) Handle(ctx context.Context, user *models.User) (tg.Chattable, e
 		return r.next.Handle(ctx, user)
 	}
 
-	var msgReply tg.MessageConfig
-
-	msgReply.Text = "Бронирование:"
+	text := "Бронирование:"
 	var staffKeyboard = tg.NewInlineKeyboardMarkup(
 		tg.NewInlineKeyboardRow(
 			tg.NewInlineKeyboardButtonData("Создать", fmt.Sprintf("%d$%d", chainer.StaffProxyCreateVSShow, chainer.StaffChangeTypeStep)),
@@ -39,6 +37,15 @@ func (r showBtn) Handle(ctx context.Context, user *models.User) (tg.Chattable, e
 		),
 	)
 
+	if r.opts.Update.Message == nil {
+		chatID := r.opts.Update.CallbackQuery.From.ID
+		msgID := r.opts.Update.CallbackQuery.Message.MessageID
+		msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, text, staffKeyboard)
+		return msgReply, nil
+	}
+
+	var msgReply tg.MessageConfig
+	msgReply.Text = text
 	msgReply.ReplyMarkup = staffKeyboard
 
 	//user.HandleStep = int(chainer.StaffProxyCreateVSShow)

@@ -40,6 +40,7 @@ func (r changeDate) Handle(ctx context.Context, user *models.User) (tg.Chattable
 	CmdAndBookTypeAndCatAndObj := r.opts.Update.CallbackQuery.Data
 	CmdAndBookTypeAndCatAndObjSl := strings.Split(CmdAndBookTypeAndCatAndObj, "$")
 	_, bookTypeAndCatAndObj, _ := strings.Cut(CmdAndBookTypeAndCatAndObj, "$")
+	bookTypeAndCatAndObjWithoutNav := bookTypeAndCatAndObj
 	//bookTypeAndCatAndObjSL := strings.Split(r.opts.Update.CallbackQuery.Data, "$")
 	//categoryID, _ := strconv.Atoi(bookTypeAndCatAndObjSL[1])
 	//objID, _ := strconv.Atoi(bookTypeAndCatAndObjSL[2])
@@ -47,6 +48,7 @@ func (r changeDate) Handle(ctx context.Context, user *models.User) (tg.Chattable
 	now := time.Now()
 
 	if strings.HasSuffix(bookTypeAndCatAndObj, "$next") || strings.HasSuffix(bookTypeAndCatAndObj, "$prev") {
+		bookTypeAndCatAndObjWithoutNav = strings.Join(CmdAndBookTypeAndCatAndObjSl[1:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
 		parsStr := CmdAndBookTypeAndCatAndObjSl[len(CmdAndBookTypeAndCatAndObjSl)-2]
 		now, _ = time.Parse(time.ANSIC, parsStr)
 		println(now.String())
@@ -55,13 +57,9 @@ func (r changeDate) Handle(ctx context.Context, user *models.User) (tg.Chattable
 		}
 	}
 
-	rows := make([][]tg.InlineKeyboardButton, 0, 6)
-	rows = append(rows, tg.NewInlineKeyboardRow(
-		tg.NewInlineKeyboardButtonData(now.Month().String(), "0")))
-	// for navigation
-	rows = append(rows, tg.NewInlineKeyboardRow(
-		tg.NewInlineKeyboardButtonData(now.Month().String(), "0")))
-	//rows = append(rows, row)
+	rows := make([][]tg.InlineKeyboardButton, 2, 8)
+	rows[0] = tg.NewInlineKeyboardRow(
+		tg.NewInlineKeyboardButtonData(now.Month().String(), "0"))
 
 ro:
 	for i := 0; i < 6; i++ {
@@ -104,10 +102,11 @@ ro:
 					continue
 				}
 			}
-			row = append(row, tg.NewInlineKeyboardButtonData(strconv.Itoa(now.Day()), fmt.Sprintf("%d%s$%s",
-				chainer.StaffChangeTimeStep,
-				bookTypeAndCatAndObj,
-				now.Format(patternDate))),
+			row = append(row, tg.NewInlineKeyboardButtonData(strconv.Itoa(now.Day()),
+				fmt.Sprintf("%d$%s$%s",
+					chainer.StaffChangeTimeStep,
+					bookTypeAndCatAndObjWithoutNav,
+					now.Format(patternDate))),
 			)
 			now = now.Add(time.Hour * 24)
 
@@ -134,26 +133,41 @@ ro:
 	rowNav := make([]tg.InlineKeyboardButton, 0, 2)
 	prevTime := now.AddDate(0, -2, 0)
 	if strings.HasSuffix(bookTypeAndCatAndObj, "$next") {
-		CmdAndBookTypeAndCatAndObj = strings.Join(CmdAndBookTypeAndCatAndObjSl[:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
+		tmp := strings.Join(CmdAndBookTypeAndCatAndObjSl[:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
 		rowNav = append(rowNav,
-			tg.NewInlineKeyboardButtonData("prev", fmt.Sprintf("%s$%s$prev", CmdAndBookTypeAndCatAndObj, prevTime.Format(time.ANSIC))),
-			tg.NewInlineKeyboardButtonData("next", fmt.Sprintf("%s$%s$next", CmdAndBookTypeAndCatAndObj, now.Format(time.ANSIC))),
+			tg.NewInlineKeyboardButtonData("prev", fmt.Sprintf("%s$%s$prev", tmp, prevTime.Format(time.ANSIC))),
+			tg.NewInlineKeyboardButtonData("next", fmt.Sprintf("%s$%s$next", tmp, now.Format(time.ANSIC))),
 		)
 	} else if strings.HasSuffix(bookTypeAndCatAndObj, "$prev") && now.AddDate(0, -1, 0).After(time.Now()) {
-		CmdAndBookTypeAndCatAndObj = strings.Join(CmdAndBookTypeAndCatAndObjSl[:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
+		tmp := strings.Join(CmdAndBookTypeAndCatAndObjSl[:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
+
 		rowNav = append(rowNav,
-			tg.NewInlineKeyboardButtonData("prev", fmt.Sprintf("%s$%s$prev", CmdAndBookTypeAndCatAndObj, prevTime.Format(time.ANSIC))),
-			tg.NewInlineKeyboardButtonData("next", fmt.Sprintf("%s$%s$next", CmdAndBookTypeAndCatAndObj, now.Format(time.ANSIC))),
+			tg.NewInlineKeyboardButtonData("prev", fmt.Sprintf("%s$%s$prev", tmp, prevTime.Format(time.ANSIC))),
+			tg.NewInlineKeyboardButtonData("next", fmt.Sprintf("%s$%s$next", tmp, now.Format(time.ANSIC))),
 		)
 	} else {
+		tmp := CmdAndBookTypeAndCatAndObj
 		if strings.HasSuffix(bookTypeAndCatAndObj, "$prev") {
-			CmdAndBookTypeAndCatAndObj = strings.Join(CmdAndBookTypeAndCatAndObjSl[:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
+			tmp = strings.Join(CmdAndBookTypeAndCatAndObjSl[:len(CmdAndBookTypeAndCatAndObjSl)-2], "$")
 		}
 		rowNav = append(rowNav,
-			tg.NewInlineKeyboardButtonData("next", fmt.Sprintf("%s$%s$next", CmdAndBookTypeAndCatAndObj, now.Format(time.ANSIC))),
+			tg.NewInlineKeyboardButtonData("next", fmt.Sprintf("%s$%s$next", tmp, now.Format(time.ANSIC))),
 		)
 	}
 	rows[1] = rowNav
+
+	var data string
+	if strings.HasSuffix(bookTypeAndCatAndObj, "$next") || strings.HasSuffix(bookTypeAndCatAndObj, "$prev") {
+		data = fmt.Sprintf("%d$%s", chainer.StaffChangeObjectStep,
+			strings.Join(CmdAndBookTypeAndCatAndObjSl[1:len(CmdAndBookTypeAndCatAndObjSl)-2], "$"))
+	} else {
+		data = fmt.Sprintf("%d$%s", chainer.StaffChangeObjectStep,
+			strings.Join(CmdAndBookTypeAndCatAndObjSl[1:len(CmdAndBookTypeAndCatAndObjSl)-1], "$"))
+
+	}
+	rows = append(rows, tg.NewInlineKeyboardRow(
+		tg.NewInlineKeyboardButtonData("Назад", data),
+	))
 
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери число:", tg.NewInlineKeyboardMarkup(rows...))
 

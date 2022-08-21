@@ -46,7 +46,7 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 			return nil, err
 		}
 		if len(places) == 0 {
-			return tg.NewMessage(chatID, "Нет категорий"), nil
+			return tg.NewMessage(chatID, "В данной категории ничего нет"), nil
 		}
 
 		rows := make([][]tg.InlineKeyboardButton, 0, len(places))
@@ -57,6 +57,9 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 			)
 			rows = append(rows, row)
 		}
+		rows = append(rows, tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Назад", fmt.Sprintf("%d$%s", chainer.StaffChangeCategoryStep, bookTypeAndCat)),
+		))
 		msgReply = tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери помещение:", tg.NewInlineKeyboardMarkup(rows...))
 	} else {
 		inventories, err := r.opts.RootRepo.GetAllInventoryByCampusIDAndCategoryID(ctx, *user.CampusID, categoryID)
@@ -69,12 +72,15 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 
 		rows := make([][]tg.InlineKeyboardButton, 0, len(inventories))
 		for _, inventory := range inventories {
-			data := fmt.Sprintf("%s$%d", bookTypeAndCat, inventory.ID)
+			data := fmt.Sprintf("%d$%s$%d", chainer.StaffChangeDateStep, bookTypeAndCat, inventory.ID)
 			row := tg.NewInlineKeyboardRow(
 				tg.NewInlineKeyboardButtonData(inventory.Name, data),
 			)
 			rows = append(rows, row)
 		}
+		rows = append(rows, tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Назад", fmt.Sprintf("%d$%s", chainer.StaffChangeCategoryStep, bookTypeAndCat)),
+		))
 		msgReply = tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери инвентарь:", tg.NewInlineKeyboardMarkup(rows...))
 	}
 

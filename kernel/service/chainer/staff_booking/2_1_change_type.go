@@ -37,6 +37,9 @@ func (r changeType) Handle(ctx context.Context, user *models.User) (tg.Chattable
 			tg.NewInlineKeyboardButtonData("Помещение", fmt.Sprintf("%d$%s", chainer.StaffChangeCategoryStep, models.PlacesType)),
 			tg.NewInlineKeyboardButtonData("Инвентарь", fmt.Sprintf("%d$%s", chainer.StaffChangeCategoryStep, models.InventoryType)),
 		),
+		tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Назад", fmt.Sprintf("%d$back", chainer.StaffShowBtnBookingsStep)),
+		),
 	)
 
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери тип:", keyboardBookingType)

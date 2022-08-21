@@ -51,6 +51,9 @@ func (r changeCategory) Handle(ctx context.Context, user *models.User) (tg.Chatt
 		)
 		rows = append(rows, row)
 	}
+	rows = append(rows, tg.NewInlineKeyboardRow(
+		tg.NewInlineKeyboardButtonData("Назад", fmt.Sprintf("%d$back", chainer.StaffChangeTypeStep)),
+	))
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери Категорию:", tg.NewInlineKeyboardMarkup(rows...))
 
 	//user.HandleStep = int(chainer.StaffChangeObjectStep)

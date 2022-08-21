@@ -35,10 +35,11 @@ func (r setCampus) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 	userNickname := strings.Split(user.Email, "@")[0]
 
 	var msgReply tg.MessageConfig
-	msgReply.Text = fmt.Sprintf("%s, ты успешно зарегистрировался, теперь тебе доступны все функциональности бота.", userNickname)
 	if user.Role == models.Staff || user.ID == 234899515 {
+		msgReply.Text = fmt.Sprintf("%s, ты успешно зарегистрировался, теперь тебе доступны все функциональности для стафф.", userNickname)
 		msgReply.ReplyMarkup = btn.Staff
 	} else {
+		msgReply.Text = fmt.Sprintf("%s, ты успешно зарегистрировался, теперь тебе доступны все функциональности для студента.", userNickname)
 		msgReply.ReplyMarkup = btn.Student
 	}
 

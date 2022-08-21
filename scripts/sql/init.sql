@@ -84,7 +84,11 @@ CREATE TABLE inventory
     create_at   TIMESTAMP NOT NULL DEFAULT now(),
     update_at   TIMESTAMP NOT NULL DEFAULT now()
 );
-
+INSERT INTO inventory(name, description, campus_id, category_id, period, permission)
+VALUES ('Война и мир', 'Толстой', 1, 4,'1 hours'::interval,
+        'student'),
+       ('Капитанская дочка', 'Пушкин', 1, 4, 'hour 1', 'student'),
+       ('451 градус по Фаренгейту', 'Рэй Брэдбери', 1, 4,'hour 1', 'student');
 CREATE TABLE bookings
 (
     id           SERIAL PRIMARY KEY,
