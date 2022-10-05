@@ -11,14 +11,15 @@ CREATE TABLE campus
 
 CREATE TABLE users
 (
-    id          BIGINT UNIQUE NOT NULL,
-    nickname    VARCHAR,
-    email       VARCHAR,
-    campus_id   INTEGER                DEFAULT NULL REFERENCES campus (id) ON DELETE SET NULL,
-    role        ROLE          NOT NULL DEFAULT 'unknown',
-    handle_step INTEGER                DEFAULT 0,
-    created_at  TIMESTAMP     NOT NULL DEFAULT now(),
-    updated_at  TIMESTAMP     NOT NULL DEFAULT now()
+    id           BIGINT UNIQUE NOT NULL,
+    nickname     VARCHAR,
+    email        VARCHAR,
+    campus_id    INTEGER                DEFAULT NULL REFERENCES campus (id) ON DELETE SET NULL,
+    role         ROLE          NOT NULL DEFAULT 'unknown',
+    handle_step  INTEGER                DEFAULT 0,
+    last_msg VARCHAR,
+    created_at   TIMESTAMP     NOT NULL DEFAULT now(),
+    updated_at   TIMESTAMP     NOT NULL DEFAULT now()
 );
 
 
@@ -85,10 +86,10 @@ CREATE TABLE inventory
     update_at   TIMESTAMP NOT NULL DEFAULT now()
 );
 INSERT INTO inventory(name, description, campus_id, category_id, period, permission)
-VALUES ('Война и мир', 'Толстой', 1, 4,'1 hours'::interval,
+VALUES ('Война и мир', 'Толстой', 1, 4, '1 hours'::interval,
         'student'),
        ('Капитанская дочка', 'Пушкин', 1, 4, 'hour 1', 'student'),
-       ('451 градус по Фаренгейту', 'Рэй Брэдбери', 1, 4,'hour 1', 'student');
+       ('451 градус по Фаренгейту', 'Рэй Брэдбери', 1, 4, 'hour 1', 'student');
 CREATE TABLE bookings
 (
     id           SERIAL PRIMARY KEY,
@@ -103,3 +104,16 @@ CREATE TABLE bookings
     create_at    TIMESTAMP    NOT NULL DEFAULT now(),
     update_at    TIMESTAMP    NOT NULL DEFAULT now()
 );
+
+SELECT
+    id,
+    user_id,
+    type,
+    inventory_id,
+    places_id,
+    confirm,
+    status,
+    start_at,
+    end_at
+FROM bookings WHERE
+        start_at = date '2022-1-22' AND end_at > now() AND (inventory_id = 1 OR places_id = 1);

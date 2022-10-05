@@ -13,6 +13,8 @@ type Opts struct {
 	SessionRepo repo.Session
 	Update      *tg.Update
 	RootRepo    repo.Root
+	Bot         *tg.BotAPI
+	BookRepo    repo.Booking
 }
 
 type NewServiceFunc func(opts *Opts) (Service, error)

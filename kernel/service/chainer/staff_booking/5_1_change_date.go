@@ -57,9 +57,18 @@ func (r changeDate) Handle(ctx context.Context, user *models.User) (tg.Chattable
 		}
 	}
 
-	rows := make([][]tg.InlineKeyboardButton, 2, 8)
+	rows := make([][]tg.InlineKeyboardButton, 2, 9)
 	rows[0] = tg.NewInlineKeyboardRow(
 		tg.NewInlineKeyboardButtonData(now.Month().String(), "0"))
+	rows = append(rows, tg.NewInlineKeyboardRow(
+		tg.NewInlineKeyboardButtonData("😡", "0"),
+		tg.NewInlineKeyboardButtonData("🙁", "0"),
+		tg.NewInlineKeyboardButtonData("😕", "0"),
+		tg.NewInlineKeyboardButtonData("🙂", "0"),
+		tg.NewInlineKeyboardButtonData("🥳", "0"),
+		tg.NewInlineKeyboardButtonData("🥵", "0"),
+		tg.NewInlineKeyboardButtonData("😏", "0"),
+	))
 
 ro:
 	for i := 0; i < 6; i++ {
@@ -171,11 +180,11 @@ ro:
 
 	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери число:", tg.NewInlineKeyboardMarkup(rows...))
 
-	user.HandleStep = int(chainer.StaffChangeTimeStep)
-	err := r.opts.UserRepo.Update(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+	//user.HandleStep = int(chainer.StaffChangeTimeStep)
+	//err := r.opts.UserRepo.Update(ctx, user)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &msgReply, nil
 }

@@ -9,23 +9,23 @@ import (
 	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type inventory struct {
+type students struct {
 	opts *chainer.Opts
 	next chainer.Chainer
 }
 
-func NewInventory(opts *chainer.Opts) chainer.Chainer {
-	return &inventory{opts: opts}
+func NewStudents(opts *chainer.Opts) chainer.Chainer {
+	return &students{opts: opts}
 }
 
-func (r *inventory) SetNext(chainer chainer.Chainer) chainer.Chainer {
+func (r *students) SetNext(chainer chainer.Chainer) chainer.Chainer {
 	r.next = chainer
 
 	return chainer
 }
 
-func (r inventory) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
-	if int(chainer.CfgInventoryStep) != user.HandleStep {
+func (r students) Handle(ctx context.Context, user *models.User) (tg.Chattable, error) {
+	if int(chainer.CfgStudentsStep) != user.HandleStep {
 		return r.next.Handle(ctx, user)
 	}
 
@@ -45,7 +45,7 @@ func (r inventory) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 			tg.NewInlineKeyboardButtonData("Назад", fmt.Sprint(chainer.CfgShowBtnStep)),
 		),
 	)
-	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Конфигурация Инвентарь:", categoryKeyboard)
+	msgReply := tg.NewEditMessageTextAndMarkup(chatID, msgID, "Конфигурация Студентов:", categoryKeyboard)
 
 	return &msgReply, nil
 }

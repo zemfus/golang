@@ -36,6 +36,7 @@ func (c botAPI) Process(ctx context.Context, opts *Opts) error {
 	userRepo := repo.NewUser(c.connPool)
 	sessionRepo := repo.NewSession(c.connPool)
 	rootRepo := repo.NewRoot(c.connPool)
+	bookRepo := repo.NewBooking(c.connPool)
 	//TODO:: CHECK USER
 	user, err := userRepo.GetByID(ctx, getUserID(opts.Update))
 	if err != nil {
@@ -84,6 +85,8 @@ func (c botAPI) Process(ctx context.Context, opts *Opts) error {
 		SessionRepo: sessionRepo,
 		Update:      opts.Update,
 		RootRepo:    rootRepo,
+		Bot:         c.bot,
+		BookRepo:    bookRepo,
 	})
 	if err != nil {
 		return err
@@ -124,8 +127,9 @@ func getUserID(update *tg.Update) int {
 
 func registerServices() map[string]service.NewServiceFunc {
 	return map[string]service.NewServiceFunc{
-		btn.Start:   service.NewStart,
-		btn.Booking: service.NewStaffBooking,
+		btn.Start:         service.NewStart,
+		btn.Booking:       service.NewStaffBooking,
+		btn.Configuration: service.NewConfiguration,
 
 		strconv.Itoa(int(chainer.StartSendConfirmCodeStep)):  service.NewStart,
 		strconv.Itoa(int(chainer.StartCheckConfirmCodeStep)): service.NewStart,
@@ -139,5 +143,20 @@ func registerServices() map[string]service.NewServiceFunc {
 		strconv.Itoa(int(chainer.StaffChangeObjectStep)):    service.NewStaffBooking,
 		strconv.Itoa(int(chainer.StaffChangeDateStep)):      service.NewStaffBooking,
 		strconv.Itoa(int(chainer.StaffChangeTimeStep)):      service.NewStaffBooking,
+
+		strconv.Itoa(int(chainer.CfgProxyItemsStep)): service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgCampusStep)):     service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgCategoryStep)):   service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgPlaceStep)):      service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgInventoryStep)):  service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgStudentsStep)):   service.NewConfiguration,
+
+		strconv.Itoa(int(chainer.CfgShowBtnStep)):          service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgGetCampusNameStep)):    service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgSetCampusNameStep)):    service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgCampusEditStep)):       service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgCampusDeleteStep)):     service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgCampusUpdateExecStep)): service.NewConfiguration,
+		strconv.Itoa(int(chainer.CfgCampusUpdateStep)):     service.NewConfiguration,
 	}
 }

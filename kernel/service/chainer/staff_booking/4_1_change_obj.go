@@ -41,9 +41,18 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 
 	var msgReply tg.EditMessageTextConfig
 	if bookTypeAndCatSL[1] == string(models.PlacesType) {
-		places, err := r.opts.RootRepo.GetAllPlacesByCampusIDAndCategoryID(ctx, *user.CampusID, categoryID)
-		if err != nil {
-			return nil, err
+		var places []models.Places
+		var err error
+		if user.Role == models.Staff {
+			places, err = r.opts.RootRepo.GetAllPlacesByCampusIDAndCategoryID(ctx, *user.CampusID, categoryID)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			places, err = r.opts.RootRepo.GetAllPlacesByCampusIDAndCategoryIDAndRole(ctx, *user.CampusID, categoryID, user.Role)
+			if err != nil {
+				return nil, err
+			}
 		}
 		if len(places) == 0 {
 			return tg.NewMessage(chatID, "В данной категории ничего нет"), nil
@@ -62,12 +71,24 @@ func (r changeObj) Handle(ctx context.Context, user *models.User) (tg.Chattable,
 		))
 		msgReply = tg.NewEditMessageTextAndMarkup(chatID, msgID, "Выбери помещение:", tg.NewInlineKeyboardMarkup(rows...))
 	} else {
-		inventories, err := r.opts.RootRepo.GetAllInventoryByCampusIDAndCategoryID(ctx, *user.CampusID, categoryID)
-		if err != nil {
-			return nil, err
-		}
-		if len(inventories) == 0 {
-			return tg.NewMessage(chatID, "Нет категорий"), nil
+		var inventories []models.Inventory
+		var err error
+		if user.Role == models.Staff {
+			inventories, err = r.opts.RootRepo.GetAllInventoryByCampusIDAndCategoryID(ctx, *user.CampusID, categoryID)
+			if err != nil {
+				return nil, err
+			}
+			if len(inventories) == 0 {
+				return tg.NewMessage(chatID, "Нет категорий"), nil
+			}
+		} else {
+			inventories, err = r.opts.RootRepo.GetAllInventoryByCampusIDAndCategoryIDAndRole(ctx, *user.CampusID, categoryID, user.Role)
+			if err != nil {
+				return nil, err
+			}
+			if len(inventories) == 0 {
+				return tg.NewMessage(chatID, "Нет категорий"), nil
+			}
 		}
 
 		rows := make([][]tg.InlineKeyboardButton, 0, len(inventories))

@@ -35,6 +35,7 @@ func (s staffBooking) Execute(ctx context.Context, user *models.User) (tg.Chatta
 		Update:      s.opts.Update,
 		SessionRepo: s.opts.SessionRepo,
 		RootRepo:    s.opts.RootRepo,
+		BookRepo:    s.opts.BookRepo,
 	}
 
 	chain := staffBkg.NewShowBtn(opts)

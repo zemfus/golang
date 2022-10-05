@@ -164,6 +164,44 @@ func (r root) GetAllInventoryByCampusID(ctx context.Context, campusID int) ([]mo
 
 }
 
+func (r root) GetAllInventoryByCampusIDByRole(ctx context.Context, campusID int, role models.Role) ([]models.Inventory, error) {
+	rows, err := r.connPool.Query(ctx,
+		`SELECT
+		id,
+		name,
+		description,
+		campus_id,
+		category_id,
+		period,
+		permission 
+	FROM inventory
+		WHERE campus_id = $1 AND permission = $2`, campusID, role)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var inventories []models.Inventory
+	for rows.Next() {
+		var inventory models.Inventory
+		err := rows.Scan(
+			&inventory.ID,
+			&inventory.Name,
+			&inventory.Description,
+			&inventory.CampusID,
+			&inventory.CategoryID,
+			&inventory.Period,
+			&inventory.Permission,
+		)
+		if err != nil {
+			return nil, err
+		}
+		inventories = append(inventories, inventory)
+	}
+	return inventories, nil
+
+}
+
 func (r root) UpdateInventory(ctx context.Context, inventory *models.Inventory) error {
 	_, err := r.connPool.Exec(ctx,
 		`UPDATE
@@ -299,6 +337,46 @@ func (r root) GetAllPlacesByCampusIDAndCategoryID(ctx context.Context, CampusID 
 	return places, nil
 }
 
+func (r root) GetAllPlacesByCampusIDAndCategoryIDAndRole(ctx context.Context, CampusID int, CategoryID int, role models.Role) ([]models.Places, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT 
+      id,
+      name, 
+      description, 
+      campus_id, 
+      category_id, 
+      floor,
+      room,
+      period,
+      permission
+        FROM places
+          WHERE campus_id = $1 AND category_id = $2 AND permission = $3`, CampusID, CategoryID, role)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var places []models.Places
+
+	for rows.Next() {
+		var place = models.Places{}
+		err = rows.Scan(&place.ID,
+			&place.Name,
+			&place.Description,
+			&place.CampusID,
+			&place.CategoryID,
+			&place.Floor,
+			&place.Room,
+			&place.Period,
+			&place.Permission,
+		)
+		if err != nil {
+			return nil, err
+		}
+		places = append(places, place)
+	}
+	return places, nil
+}
+
 func (r root) GetAllInventoryByCampusIDAndCategoryID(ctx context.Context, CampusID int, CategoryID int) ([]models.Inventory, error) {
 	rows, err := r.connPool.Query(ctx, `SELECT 
       id,
@@ -334,4 +412,91 @@ func (r root) GetAllInventoryByCampusIDAndCategoryID(ctx context.Context, Campus
 		inventories = append(inventories, inventory)
 	}
 	return inventories, nil
+}
+
+func (r root) GetAllInventoryByCampusIDAndCategoryIDAndRole(ctx context.Context, CampusID int, CategoryID int, role models.Role) ([]models.Inventory, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT 
+      id,
+      name, 
+      description, 
+      campus_id,
+      category_id,
+      period,
+      permission,
+        FROM inventory
+          WHERE campus_id = $1 AND category_id = $2 AND permission = $3`, CampusID, CategoryID, role)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var inventories []models.Inventory
+	for rows.Next() {
+		var inventory = models.Inventory{}
+
+		err = rows.Scan(&inventory.ID,
+			&inventory.Name,
+			&inventory.Description,
+			&inventory.CampusID,
+			&inventory.CategoryID,
+			&inventory.Period,
+			&inventory.Permission,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		inventories = append(inventories, inventory)
+	}
+	return inventories, nil
+}
+
+func (r root) CreateCampus(ctx context.Context, campus *models.Campus) error {
+	exec, err := r.connPool.Exec(ctx,
+		`SELECT id FROM category WHERE name = $1`, campus.Name)
+	if err != nil {
+		return err
+	}
+
+	if exec.RowsAffected() != 0 {
+		return nil
+	}
+
+	_, err = r.connPool.Exec(ctx,
+		`INSERT INTO campus(
+		name
+		) VALUES($1)`,
+		campus.Name)
+
+	return err
+}
+func (r root) DeleteCampus(ctx context.Context, ID int) error {
+	_, err := r.connPool.Exec(ctx, "DELETE FROM campus WHERE id = $1", ID)
+	return err
+}
+
+func (r root) ExistsCampusByID(ctx context.Context, ID int) (bool, error) {
+	cmd, err := r.connPool.Exec(ctx, "SELECT id FROM campus WHERE id = $1", ID)
+	if err != nil {
+		return false, err
+	}
+
+	if cmd.RowsAffected() != 0 {
+		return true, nil
+	}
+	return false, nil
+}
+
+func (r root) UpdateCampus(ctx context.Context, campus *models.Campus) error {
+	_, err := r.connPool.Exec(ctx,
+		`UPDATE
+		campus SET
+		name = $1,
+		updated_at = now()
+			WHERE id = $2`,
+		campus.Name,
+		campus.ID,
+	)
+
+	return err
 }

@@ -17,14 +17,15 @@ func NewUser(connPool *pgxpool.Pool) User {
 	}
 }
 
-func (u user) GetByID(ctx context.Context, id int) (*models.User, error) {
-	rows, err := u.connPool.Query(ctx, `SELECT
+func (r user) GetByID(ctx context.Context, id int) (*models.User, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT
 		id,
 		nickname,
 		email,
 		campus_id,
 		role,
-		handle_step
+		handle_step,
+		last_msg
 			FROM users WHERE id = $1`, id)
 	if err != nil {
 		return nil, err
@@ -38,7 +39,8 @@ func (u user) GetByID(ctx context.Context, id int) (*models.User, error) {
 			&user.Email,
 			&user.CampusID,
 			&user.Role,
-			&user.HandleStep)
+			&user.HandleStep,
+			&user.LastMsg)
 		if err != nil {
 			return nil, err
 		}
@@ -47,8 +49,8 @@ func (u user) GetByID(ctx context.Context, id int) (*models.User, error) {
 	return &user, nil
 }
 
-func (u user) GetAllByCampus(ctx context.Context, campus string) ([]models.User, error) {
-	rows, err := u.connPool.Query(ctx, `SELECT 
+func (r user) GetAllByCampus(ctx context.Context, campus string) ([]models.User, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT 
     id, 
     nickname, 
     email, 
@@ -81,14 +83,15 @@ func (u user) GetAllByCampus(ctx context.Context, campus string) ([]models.User,
 	return users, nil
 }
 
-func (u user) GetByNickname(ctx context.Context, nickname string) (*models.User, error) {
-	rows, err := u.connPool.Query(ctx, `SELECT
+func (r user) GetByNickname(ctx context.Context, nickname string) (*models.User, error) {
+	rows, err := r.connPool.Query(ctx, `SELECT
 		id,
 		nickname,
 		email,
 		campus_id,
 		role,
-		handle_step
+		handle_step,
+		last_msg
 			FROM users WHERE nickname = $1`, nickname)
 	if err != nil {
 		return nil, err
@@ -102,7 +105,8 @@ func (u user) GetByNickname(ctx context.Context, nickname string) (*models.User,
 			&user.Email,
 			&user.CampusID,
 			&user.Role,
-			&user.HandleStep)
+			&user.HandleStep,
+			&user.LastMsg)
 		if err != nil {
 			return nil, err
 		}
@@ -111,8 +115,20 @@ func (u user) GetByNickname(ctx context.Context, nickname string) (*models.User,
 	return &user, nil
 }
 
-func (u user) Create(ctx context.Context, user *models.User) error {
-	exec, err := u.connPool.Exec(ctx, "SELECT * FROM users WHERE id = $1", user.ID)
+func (r user) ExistsUsersInCampusByID(ctx context.Context, ID int) (bool, error) {
+	cmd, err := r.connPool.Exec(ctx, "SELECT id FROM users WHERE campus_id = $1", ID)
+	if err != nil {
+		return false, err
+	}
+
+	if cmd.RowsAffected() != 0 {
+		return true, nil
+	}
+	return false, nil
+}
+
+func (r user) Create(ctx context.Context, user *models.User) error {
+	exec, err := r.connPool.Exec(ctx, "SELECT * FROM users WHERE id = $1", user.ID)
 	if err != nil {
 		return err
 	}
@@ -120,40 +136,42 @@ func (u user) Create(ctx context.Context, user *models.User) error {
 	if exec.RowsAffected() != 0 {
 		return nil
 	}
-	_, err = u.connPool.Exec(ctx,
+	_, err = r.connPool.Exec(ctx,
 		"INSERT INTO users(id, nickname, email, campus_id, role, handle_step) VALUES($1, $2, $3, $4, $5, $6)",
 		user.ID, user.Nickname, user.Email, user.CampusID, user.Role, user.HandleStep)
 
 	return err
 }
 
-func (u user) Update(ctx context.Context, user *models.User) error {
-	_, err := u.connPool.Exec(ctx,
+func (r user) Update(ctx context.Context, user *models.User) error {
+	_, err := r.connPool.Exec(ctx,
 		`UPDATE users SET
 			nickname = $1,
 			email = $2,
 			campus_id = $3,
 			role = $4,
 			handle_step = $5,
+			last_msg = $6,
 			updated_at = now()
-		WHERE id = $6`,
+		WHERE id = $7`,
 		user.Nickname,
 		user.Email,
 		user.CampusID,
 		user.Role,
 		user.HandleStep,
+		user.LastMsg,
 		user.ID)
 
 	return err
 }
 
-func (u user) Delete(ctx context.Context, ID int) error {
-	_, err := u.connPool.Exec(ctx, "DELETE FROM users WHERE id = $1", ID)
+func (r user) Delete(ctx context.Context, ID int) error {
+	_, err := r.connPool.Exec(ctx, "DELETE FROM users WHERE id = $1", ID)
 	return err
 }
 
-func (u user) ExistByID(ctx context.Context, id int) (bool, error) {
-	exec, err := u.connPool.Exec(ctx, "SELECT * FROM users WHERE id = $1", id)
+func (r user) ExistByID(ctx context.Context, id int) (bool, error) {
+	exec, err := r.connPool.Exec(ctx, "SELECT * FROM users WHERE id = $1", id)
 	if err != nil {
 		return false, err
 	}
@@ -166,8 +184,8 @@ func (u user) ExistByID(ctx context.Context, id int) (bool, error) {
 
 }
 
-func (u user) ExistByNickname(ctx context.Context, nickname string) (bool, error) {
-	exec, err := u.connPool.Exec(ctx, "SELECT * FROM users WHERE nickname = $1", nickname)
+func (r user) ExistByNickname(ctx context.Context, nickname string) (bool, error) {
+	exec, err := r.connPool.Exec(ctx, "SELECT * FROM users WHERE nickname = $1", nickname)
 	if err != nil {
 		return false, err
 	}

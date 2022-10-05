@@ -5,11 +5,11 @@ import tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 const (
 	Start = "/start" // start
 
-	Booking       = "Бронирование"
+	Booking       = "Бронирование 🕘"
 	MyBooking     = "Мои бронирование"
 	Requests      = "Заявки"
-	Configuration = "Конфигурация"
-	Events        = "Мероприятия"
+	Configuration = "Конфигурация 🛠"
+	Events        = "Мероприятия 📢"
 	Subscriptions = "Подписки"
 	Status        = "Статус"
 )

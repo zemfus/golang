@@ -21,14 +21,21 @@ const (
 	StaffChangeTimeStep      StepHandle = 13 // 6
 	StaffCreateBookingStep   StepHandle = 14 // 7
 
-	CfgShowBtn    StepHandle = 15 // конфигурация ========================
-	CfgProxyItems StepHandle = 16
+	CfgShowBtnStep    StepHandle = 15 // конфигурация ========================
+	CfgProxyItemsStep StepHandle = 16
 
-	CfgCampusStepHandle    = 17
-	CfgCategoryStepHandle  = 18
-	CfgPlaceStepHandle     = 19
-	CfgInventoryStepHandle = 20
-	CfgStudentsStepHandle  = 21
+	CfgCampusStep           StepHandle = 17
+	CfgGetCampusNameStep    StepHandle = 177
+	CfgSetCampusNameStep    StepHandle = 178
+	CfgCampusCreateStep     StepHandle = 1777
+	CfgCampusEditStep       StepHandle = 171
+	CfgCampusDeleteStep     StepHandle = 172
+	CfgCampusUpdateStep     StepHandle = 173
+	CfgCampusUpdateExecStep StepHandle = 174
+	CfgCategoryStep         StepHandle = 18
+	CfgPlaceStep            StepHandle = 19
+	CfgInventoryStep        StepHandle = 20
+	CfgStudentsStep         StepHandle = 21
 )
 
 var StartSteps = []StepHandle{
@@ -50,4 +57,21 @@ var StaffBookingSteps = []StepHandle{
 	StaffChangeDateStep,
 	StaffChangeTimeStep,
 	StaffCreateBookingStep,
+	CfgCampusEditStep,
+}
+
+var CfgSteps = []StepHandle{
+	CfgShowBtnStep,
+	CfgProxyItemsStep,
+	CfgCampusStep,
+	CfgCategoryStep,
+	CfgPlaceStep,
+	CfgInventoryStep,
+	CfgStudentsStep,
+	CfgGetCampusNameStep,
+	CfgSetCampusNameStep,
+	CfgCampusEditStep,
+	CfgCampusDeleteStep,
+	CfgCampusUpdateStep,
+	CfgCampusUpdateExecStep,
 }

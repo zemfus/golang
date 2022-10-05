@@ -13,6 +13,8 @@ type Opts struct {
 	Update      *tg.Update
 	SessionRepo repo.Session
 	RootRepo    repo.Root
+	Bot         *tg.BotAPI
+	BookRepo    repo.Booking
 }
 
 type Chainer interface {

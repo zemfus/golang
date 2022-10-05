@@ -19,6 +19,7 @@ type User struct {
 	Email      string `json:"email"`
 	CampusID   *int   `json:"campus_id"`
 	HandleStep int    `json:"handle_step"`
+	LastMsg    string `json:"last_msg"`
 }
 
 type Campus struct {
